@@ -47,7 +47,7 @@ If you want to run step files, run your builds in Codeship.
 
 ## Trademark Disclaimer
 This action is not endorsed or reviewed by Codeship. 
-Use at your own risk. The author has no affiliation with Codeship.
+Use at your own risk. The author is not employed by either GitHub or Codeship.
 
 - "Codeship" and "Codeship Pro" are legal marks of CloudBees, Inc.
 - "GitHub" and "GitHub Workflows" are the legal marks of GitHub, Inc.
