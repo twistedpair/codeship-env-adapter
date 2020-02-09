@@ -5,7 +5,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Where are my env var?
     steps:
-      - uses: twistedpair/codeship-env-adapter@v0.0.1
+     #- uses: twistedpair/codeship-env-adapter@v0.0.1
+      - uses: ./
         with:
           project-id: '123abc-project-id'
 
