@@ -46,7 +46,6 @@ async function run(): Promise<void> {
   setVariable(EnvironmentVariables.CI_STRING_TIME, nowAsTimeExpectedIsoString);
 
 
-  // TODO what if it's a tag?
   const branchName = context?.ref?.match(/[^/]+$/)?.[0];
   if(branchName) {
     setVariable(EnvironmentVariables.CI_BRANCH, branchName);
@@ -55,6 +54,8 @@ async function run(): Promise<void> {
   // @ts-ignore - missing lib defs
   setVariable(EnvironmentVariables.CI_REPO_NAME,  event?.repository?.name );
 
+  // TODO The pull request payload is missing in this implementation (tested with PR builds)
+  // Note: the PR functionality in Codeship is not function from my empirical testing, so this behavior is the same as Codeship
   const pullRequest = event?.pull_request;
   setVariable(EnvironmentVariables.CI_PULL_REQUEST,  pullRequest?.number?.toString() ?? '');
   setVariable(EnvironmentVariables.CI_PR_NUMBER,  pullRequest?.html_url ?? 'false');
