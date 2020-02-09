@@ -1,0 +1,12 @@
+name: "Codeship Environment Variable Adapter"
+description: "Create same environment variables as Codeship in your workflow"
+branding:
+  icon: activity
+  color: orange
+inputs:
+  project-id:
+    description: (optional) Legacy Codeship project id
+    required: false
+runs:
+  using: "node12"
+  main: "lib/index.js"

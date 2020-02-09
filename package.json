@@ -1,0 +1,21 @@
+{
+  "name": "setup-codeship-env",
+  "version": "0.0.1",
+  "description": "Add Codeship Pro environment variables to your workflow",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "tsc && mocha ./tests/_suite.js",
+    "build": "tsc",
+    "release": "npm install && npm run build && npm prune --production && git add -f node_modules/* && git add -f lib/*"
+  },
+  "author": "twistedpair",
+  "dependencies": {
+    "@actions/core": "^1.2.2",
+    "@actions/github": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^7.0.1",
+    "@types/node": "^12.12.26",
+    "typescript": "^3.7.5"
+  }
+}
