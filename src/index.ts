@@ -5,6 +5,7 @@ import {EnvironmentVariables} from './environmentVariables';
 async function run(): Promise<void> {
   const projectId: string | undefined = core.getInput('project-id', {required: false});
   const context = github.context;
+  const event = context.payload;
 
   core.warning(`Using github keys [${JSON.stringify(Object.keys(context))}]`);
   core.warning(`Using github.context [${JSON.stringify(context)}]`);
@@ -22,12 +23,13 @@ async function run(): Promise<void> {
   setVariable(EnvironmentVariables.CI_BUILD_ID, buildId);
 
   setVariable(EnvironmentVariables.CI_COMMIT_ID, context?.sha);
-  // @ts-ignore - missing lib defs
-  setVariable(EnvironmentVariables.CI_COMMIT_MESSAGE, context?.event?.head_commit?.message);
-  // @ts-ignore - missing lib defs
-  setVariable(EnvironmentVariables.CI_COMMITTER_USERNAME, context?.event?.head_commit?.author?.username);
-  // @ts-ignore - missing lib defs
-  setVariable(EnvironmentVariables.CI_COMMITTER_EMAIL, context?.event?.head_commit?.author?.email);
+
+  const headCommit = event?.head_commit;
+  const author = headCommit?.author;
+  setVariable(EnvironmentVariables.CI_COMMIT_MESSAGE, headCommit?.message);
+  setVariable(EnvironmentVariables.CI_COMMITTER_USERNAME, author?.username);
+  setVariable(EnvironmentVariables.CI_COMMITTER_EMAIL, author?.email);
+  setVariable(EnvironmentVariables.CI_COMMITTER_NAME, author?.name);
 
   const nowMilliseconds = Date.now();
   const nowAsTimeString = new Date(nowMilliseconds).toISOString();
@@ -35,12 +37,19 @@ async function run(): Promise<void> {
   setVariable(EnvironmentVariables.CI_STRING_TIME, nowAsTimeString);// TODO test in CS, confirm expected format
 
 
+  // TODO what if it's a tag?
   const branchName = context?.ref?.match(/[^/]+$/)?.[0];
   if(branchName) {
     setVariable(EnvironmentVariables.CI_BRANCH, branchName);
   }
+
   // @ts-ignore - missing lib defs
-  setVariable(EnvironmentVariables.CI_REPO_NAME,  context?.event?.repository?.name );
+  setVariable(EnvironmentVariables.CI_REPO_NAME,  event?.repository?.name );
+
+  const pullRequest = event?.pull_request;
+  setVariable(EnvironmentVariables.CI_PULL_REQUEST,  pullRequest?.number?.toString() ?? '');
+  setVariable(EnvironmentVariables.CI_PR_NUMBER,  pullRequest?.html_url ?? 'false');
+
 }
 
 function setVariable(name: EnvironmentVariables, value: string) {
