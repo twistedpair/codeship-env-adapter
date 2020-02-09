@@ -2,9 +2,12 @@ import * as core from '@actions/core';
 import * as github from '@actions/github';
 import {EnvironmentVariables} from './environmentVariables';
 
-async function run() {
+async function run(): void {
   const projectId: string | undefined = core.getInput('project-id', {required: false});
   const context = github.context;
+
+  core.debug(`Using github keys [${JSON.stringify(Object.keys(context))}]`);
+  core.debug(`Using github.context [${JSON.stringify(context)}]`);
 
   if(projectId) {
     setVariable(EnvironmentVariables.CI_PROJECT_ID, projectId);

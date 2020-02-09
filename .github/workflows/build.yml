@@ -17,4 +17,4 @@ jobs:
         run: echo "GithubContext ${{ toJson(github) }}"
 
       - name: Playback some env vars
-        run: echo "The current build environment is in $(CI_NAME)"
+        run: echo "The current build environment is in $CI_NAME"
