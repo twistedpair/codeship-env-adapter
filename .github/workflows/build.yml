@@ -5,6 +5,9 @@ jobs:
     runs-on: ubuntu-latest
     name: Where are my env var?
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+     
      #- uses: twistedpair/codeship-env-adapter@v0.0.1
       - uses: ./
         with:
