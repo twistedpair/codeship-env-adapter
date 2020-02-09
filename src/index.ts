@@ -9,6 +9,8 @@ async function run(): Promise<void> {
   const context = github.context;
   const event = context.payload;
 
+  core.warning(`Using github.context [${JSON.stringify(context)}]`);
+
   if(projectId) {
     setVariable(EnvironmentVariables.CI_PROJECT_ID, projectId);
   }
