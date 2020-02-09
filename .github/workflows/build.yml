@@ -5,11 +5,11 @@ jobs:
     runs-on: ubuntu-latest
     name: Where are my env var?
     steps:
-        uses: twistedpair/codeship-env-adapter@v1
+      - uses: twistedpair/codeship-env-adapter@v1
         with:
           project-id: '123abc-project-id'
 
-      - name: Dumpe GitHub context var
+      - name: Dump GitHub context var
         run: echo "GithubContext ${{ toJson(github) }}"
 
       - name: Playback some env vars
