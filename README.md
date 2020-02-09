@@ -40,14 +40,14 @@ If you would like to help define additional behaviors, please submit a PR.
 
 ## What this DOESN'T do
 
-Make any `codeship-steps.yml` or `codeship-services.yml` files run in GitHub Workflows.
+This action will **NOT** run `codeship-steps.yml` or `codeship-services.yml` files in GitHub Workflows.
 
 If you want to run step files, run your builds in Codeship.
 
 
 ## Trademark Disclaimer
 This action is not endorsed or reviewed by Codeship. 
-Use at your own risk. The author has not affiliation with Codeship.
+Use at your own risk. The author has no affiliation with Codeship.
 
 - "Codeship" and "Codeship Pro" are legal marks of CloudBees, Inc.
 - "GitHub" and "GitHub Workflows" are the legal marks of GitHub, Inc.
