@@ -2,6 +2,8 @@ import * as core from '@actions/core';
 import * as github from '@actions/github';
 import {EnvironmentVariables} from './environmentVariables';
 
+const uuid = require('uuid/v4');
+
 async function run(): Promise<void> {
   const projectId: string | undefined = core.getInput('project-id', {required: false});
   const context = github.context;
@@ -14,8 +16,10 @@ async function run(): Promise<void> {
   setVariable(EnvironmentVariables.CI, 'true');
   setVariable(EnvironmentVariables.CI_NAME, 'github');
 
-  // TODO get from toolkit - isn't available in that object presently
-  setVariable(EnvironmentVariables.CI_BUILD_ID, '${{ github.run_id }}');
+  // TODO get from toolkit - isn't available in that object presently, found in '${{ github.run_id }}'
+  // @ts-ignore
+  const buildId = context?.run_id ?? uuid(); // use UUID until GitHub library starts working
+  setVariable(EnvironmentVariables.CI_BUILD_ID, buildId);
   setVariable(EnvironmentVariables.CI_BUILD_APPROVED, 'false');
 
   setVariable(EnvironmentVariables.CI_COMMIT_ID, context?.sha);
@@ -27,7 +31,7 @@ async function run(): Promise<void> {
   setVariable(EnvironmentVariables.CI_COMMITTER_EMAIL, author?.email);
   setVariable(EnvironmentVariables.CI_COMMITTER_NAME, author?.name);
 
-  // TODO add expected description (rather complex to dig up)
+  // TODO add expected description (rather complex to dig up), made by `git describe`
   // Expected description format - "2019-07-18.1563481767-1-g7f60" < 'g<first 4 sha char>'
   //       commit date branched from ^     same sec ^     ^ commit number on branch (0 is the commit you branched from)
   setVariable(EnvironmentVariables.CI_COMMIT_DESCRIPTION, '');
