@@ -51,7 +51,7 @@ async function run(): Promise<void> {
   }
 
   // @ts-ignore - missing lib defs
-  setVariable(EnvironmentVariables.CI_REPO_NAME,  event?.repository?.name ); // TODO should this be repo name or full_name?
+  setVariable(EnvironmentVariables.CI_REPO_NAME,  event?.repository?.name );
 
   const pullRequest = event?.pull_request;
   setVariable(EnvironmentVariables.CI_PULL_REQUEST,  pullRequest?.number?.toString() ?? '');
