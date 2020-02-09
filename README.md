@@ -45,7 +45,7 @@ This action will **NOT** run `codeship-steps.yml` or `codeship-services.yml` fil
 If you want to run step files, run your builds in Codeship.
 
 
-## Trademark Disclaimer
+## Disclaimers
 This action is not endorsed or reviewed by Codeship. 
 Use at your own risk. The author is not employed by either GitHub or Codeship.
 
