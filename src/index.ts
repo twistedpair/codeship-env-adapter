@@ -6,8 +6,9 @@ async function run(): Promise<void> {
   const projectId: string | undefined = core.getInput('project-id', {required: false});
   const context = github.context;
 
-  core.log(`Using github keys [${JSON.stringify(Object.keys(context))}]`);
-  core.log(`Using github.context [${JSON.stringify(context)}]`);
+  core.warning(`Using github keys [${JSON.stringify(Object.keys(context))}]`);
+  core.warning(`Using github.context [${JSON.stringify(context)}]`);
+  core.debug('Can you see debugging?');
 
   if(projectId) {
     setVariable(EnvironmentVariables.CI_PROJECT_ID, projectId);
