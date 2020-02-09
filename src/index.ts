@@ -2,7 +2,7 @@ import * as core from '@actions/core';
 import * as github from '@actions/github';
 import {EnvironmentVariables} from './environmentVariables';
 
-async function run(): void {
+async function run(): Promise<void> {
   const projectId: string | undefined = core.getInput('project-id', {required: false});
   const context = github.context;
 
