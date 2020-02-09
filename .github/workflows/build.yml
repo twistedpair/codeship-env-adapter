@@ -13,8 +13,5 @@ jobs:
         with:
           project-id: '123abc-project-id'
 
-      - name: Dump GitHub context var
-        run: echo "GithubContext ${{ toJson(github) }}"
-
       - name: Playback some env vars
         run: echo "The current build environment is in $CI_NAME"

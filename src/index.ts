@@ -7,9 +7,8 @@ async function run(): Promise<void> {
   const context = github.context;
   const event = context.payload;
 
-  core.warning(`Using github keys [${JSON.stringify(Object.keys(context))}]`);
-  core.warning(`Using github.context [${JSON.stringify(context)}]`);
-  core.debug('Can you see debugging?');
+  core.warning(`Using github keys [${JSON.stringify(Object.keys(github))}]`);
+  // core.warning(`Using github.context [${JSON.stringify(context)}]`);
 
   if(projectId) {
     setVariable(EnvironmentVariables.CI_PROJECT_ID, projectId);
@@ -19,7 +18,7 @@ async function run(): Promise<void> {
   setVariable(EnvironmentVariables.CI_NAME, 'github');
 
   // @ts-ignore - missing lib defs
-  const buildId = context.run_id;
+  const buildId = github?.run_id;
   setVariable(EnvironmentVariables.CI_BUILD_ID, buildId);
 
   setVariable(EnvironmentVariables.CI_COMMIT_ID, context?.sha);
@@ -44,7 +43,7 @@ async function run(): Promise<void> {
   }
 
   // @ts-ignore - missing lib defs
-  setVariable(EnvironmentVariables.CI_REPO_NAME,  event?.repository?.name );
+  setVariable(EnvironmentVariables.CI_REPO_NAME,  event?.repository?.name ); // TODO should this be repo name or full_name?
 
   const pullRequest = event?.pull_request;
   setVariable(EnvironmentVariables.CI_PULL_REQUEST,  pullRequest?.number?.toString() ?? '');
