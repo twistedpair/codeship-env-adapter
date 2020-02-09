@@ -6,8 +6,8 @@ async function run(): Promise<void> {
   const projectId: string | undefined = core.getInput('project-id', {required: false});
   const context = github.context;
 
-  core.debug(`Using github keys [${JSON.stringify(Object.keys(context))}]`);
-  core.debug(`Using github.context [${JSON.stringify(context)}]`);
+  core.log(`Using github keys [${JSON.stringify(Object.keys(context))}]`);
+  core.log(`Using github.context [${JSON.stringify(context)}]`);
 
   if(projectId) {
     setVariable(EnvironmentVariables.CI_PROJECT_ID, projectId);
@@ -34,7 +34,7 @@ async function run(): Promise<void> {
   setVariable(EnvironmentVariables.CI_STRING_TIME, nowAsTimeString);// TODO test in CS, confirm expected format
 
 
-  const branchName = context?.ref?.match(/[^/]$/)?.[0];
+  const branchName = context?.ref?.match(/[^/]+$/)?.[0];
   if(branchName) {
     setVariable(EnvironmentVariables.CI_BRANCH, branchName);
   }
