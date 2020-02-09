@@ -1,0 +1,17 @@
+on: [push]
+
+jobs:
+  sanity_check_action:
+    runs-on: ubuntu-latest
+    name: Where are my env var?
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+     
+     #- uses: twistedpair/codeship-env-adapter@v0.0.1
+      - uses: ./
+        with:
+          project-id: '123abc-project-id'
+
+      - name: Playback some env vars
+        run: echo "The current build environment is in $CI_NAME"
