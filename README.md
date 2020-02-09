@@ -2,7 +2,7 @@
 
 This action defines the same rich [environment variables as Codeship Pro](https://documentation.codeship.com/pro/builds-and-configuration/environment-variables/#default-environment-variables) in your GitHub Workflow.
 
-The action enables running existing Codeship scripts that reference variables like `CI_COMMIT_MESSAGE`, without having to refactor them to [GitHub Workflows Syntax](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions). Using this action, you can share scripts across your GitHub Workflow and Codeship, getting the best of both worlds 🎉.
+The action enables running existing Codeship scripts that reference variables like `CI_COMMIT_MESSAGE`, without having to refactor them to [GitHub Workflows Syntax](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions). Using this action, you can share scripts across your GitHub Workflow and Codeship builds, getting the best of both worlds 🎉.
 
 ## Example Workflow Step
 
