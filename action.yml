@@ -1,5 +1,5 @@
 name: "Codeship Environment Variable Adapter"
-description: "Replicate Codeship environment variables in your workflow"
+description: "Use Codeship environment variables in your workflow"
 branding:
   icon: edit
   color: orange
