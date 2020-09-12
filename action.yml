@@ -1,7 +1,7 @@
 name: "Codeship Environment Variable Adapter"
 description: "Use Codeship environment variables in your workflow"
 branding:
-  icon: edit
+  icon: life-buoy
   color: orange
 inputs:
   project-id:
