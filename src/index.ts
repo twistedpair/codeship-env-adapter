@@ -1,8 +1,7 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import {EnvironmentVariables} from './environmentVariables';
-
-const uuid = require('uuid/v4');
+import { v4 as uuidV4 } from 'uuid';
 
 async function run(): Promise<void> {
   const projectId: string | undefined = core.getInput('project-id', {required: false});
@@ -18,7 +17,7 @@ async function run(): Promise<void> {
 
   // TODO get from toolkit - isn't available in that object presently, found in '${{ github.run_id }}'
   // @ts-ignore
-  const buildId = context?.run_id ?? uuid(); // use UUID until GitHub library starts working
+  const buildId = context?.run_id ?? uuidV4(); // use UUID until GitHub library starts working
   setVariable(EnvironmentVariables.CI_BUILD_ID, buildId);
   setVariable(EnvironmentVariables.CI_BUILD_APPROVED, 'false');
 
