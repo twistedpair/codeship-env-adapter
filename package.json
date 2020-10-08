@@ -6,7 +6,7 @@
   "scripts": {
     "test": "tsc && mocha ./tests/_suite.js",
     "build": "tsc",
-    "release": "npm install && npm run build && npm prune --production && git add -f node_modules/* && git add -f lib/*"
+    "release": "npm ci && npm run build && npm prune --production && git add -f node_modules/* && git add -f lib/*"
   },
   "author": "twistedpair",
   "dependencies": {

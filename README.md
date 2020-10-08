@@ -9,7 +9,7 @@ The action enables running existing Codeship scripts that reference variables li
 ```yaml
 name: Where are my env var?
 steps:
-  - uses: twistedpair/codeship-env-adapter@v0.2
+  - uses: twistedpair/codeship-env-adapter@v1
     with:
       project-id: '123abc-project-id' # provide your project id, if you fancy 
 
