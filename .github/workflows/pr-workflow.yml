@@ -1,0 +1,21 @@
+on: [pull_request]
+name: Pull Request Workflow
+
+jobs:
+  build-and-test:
+    name: Build and Test 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Compile Typescript
+        run: npm run build
+
+      - name: Load Action Locally 
+        uses: ./
+
+      - name: Try accessing the added ENV vars
+        run: echo "The current build environment is in $CI_NAME"
