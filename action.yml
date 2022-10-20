@@ -8,5 +8,5 @@ inputs:
     description: (optional) Codeship project id
     required: false
 runs:
-  using: "node12"
+  using: "node16"
   main: "lib/index.js"
