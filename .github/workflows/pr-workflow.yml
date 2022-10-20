@@ -1,5 +1,5 @@
-on: [pull_request]
-name: Pull Request Workflow
+on: [push]
+name:  Action Test Workflow
 
 jobs:
   build-and-test:
