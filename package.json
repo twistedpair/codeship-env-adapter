@@ -1,6 +1,6 @@
 {
   "name": "codeship-env-adapter",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Add Codeship Pro environment variables to your workflow",
   "main": "lib/index.js",
   "scripts": {
@@ -14,7 +14,7 @@
     "uuid": "8.3.2"
   },
   "devDependencies": {
-    "@types/node": "16.11.68",
+    "@types/node": "20.11.17",
     "@types/uuid": "8.3.4",
     "typescript": "4.8.4"
   }

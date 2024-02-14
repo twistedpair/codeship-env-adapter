@@ -3,10 +3,14 @@ name:  Action Test Workflow
 
 jobs:
   build-and-test:
-    name: Build and Test 
+    name: Build and Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
@@ -14,7 +18,7 @@ jobs:
       - name: Compile Typescript
         run: npm run build
 
-      - name: Load Action Locally 
+      - name: Load Action Locally
         uses: ./
 
       - name: Try accessing the added ENV vars
