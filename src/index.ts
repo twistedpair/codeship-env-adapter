@@ -19,18 +19,16 @@ async function run(): Promise<void> {
   setVariable(EnvironmentVariables.CI, 'true');
   setVariable(EnvironmentVariables.CI_NAME, 'github');
 
-  // TODO get from toolkit - isn't available in that object presently, found in '${{ github.run_id }}'
-  // @ts-ignore
-  const buildId = context?.run_id ?? uuidV4(); // use UUID until GitHub library starts working
+  const buildId = context?.runId?.toString() ?? uuidV4(); // use UUID until GitHub library starts working
   setVariable(EnvironmentVariables.CI_BUILD_ID, buildId);
   setVariable(EnvironmentVariables.CI_BUILD_APPROVED, 'false');
 
-  const event = github.context.payload;
-  if (github.context.eventName === 'push') {
+  const event = context.payload;
+  const eventName = context.eventName;
+  if (eventName === 'push') {
     const pushPayload = event as PushEvent;
-    core.info(`The head commit is: ${pushPayload.head_commit}`);
     populatePushEventCommitDetails(pushPayload, context);
-  } else if (github.context.eventName === 'pull_request') {
+  } else if (eventName === 'pull_request') {
     const pullRequestPayload = event as PullRequest;
     populatePullRequestEventCommitDetails(pullRequestPayload, context);
   }
@@ -99,6 +97,10 @@ async function populatePullRequestEventCommitDetails(
     setVariable(
       EnvironmentVariables.CI_COMMIT_MESSAGE,
       response.data.commit.message,
+    );
+  } else {
+    core.warning(
+      'Unable to get commit message for PR. Missing github-token input.',
     );
   }
 }
