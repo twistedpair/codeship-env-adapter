@@ -11,6 +11,9 @@
     /* Because of type def errors coming from GitHub libraries */
     "skipLibCheck": true,
 
+    /* Because of type checking options with @octokit/webhooks-types */
+    "strictNullChecks": true,
+
     /* Strict Type-Checking Options */
     "strict": true /* Enable all strict type-checking options. */,
 
