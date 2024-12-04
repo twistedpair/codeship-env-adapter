@@ -11,7 +11,10 @@ name: Where are my env var?
 steps:
   - uses: twistedpair/codeship-env-adapter@v1
     with:
-      project-id: '123abc-project-id' # provide your project id, if you fancy 
+      # Provide github-token if you need to populate commit messages for pull_request event triggers
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+      # provide your project id, if you fancy
+      project-id: '123abc-project-id'
 
   - name: Playback some env vars
     run: echo "Hi, I'm build $CI_COMMIT_ID"
