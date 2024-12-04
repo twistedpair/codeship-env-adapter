@@ -9,12 +9,12 @@ async function run(): Promise<void> {
   const projectId: string | undefined = core.getInput('project-id', {
     required: false,
   });
-  const context = github.context;
-  // const event = context.payload;
 
   if (projectId) {
     setVariable(EnvironmentVariables.CI_PROJECT_ID, projectId);
   }
+
+  const context = github.context;
 
   setVariable(EnvironmentVariables.CI, 'true');
   setVariable(EnvironmentVariables.CI_NAME, 'github');
@@ -25,13 +25,13 @@ async function run(): Promise<void> {
   setVariable(EnvironmentVariables.CI_BUILD_ID, buildId);
   setVariable(EnvironmentVariables.CI_BUILD_APPROVED, 'false');
 
+  const event = github.context.payload;
   if (github.context.eventName === 'push') {
-    const pushPayload = github.context.payload as PushEvent;
+    const pushPayload = event as PushEvent;
     core.info(`The head commit is: ${pushPayload.head_commit}`);
     populatePushEventCommitDetails(pushPayload, context);
   } else if (github.context.eventName === 'pull_request') {
-    const pullRequestPayload = github.context.payload
-      .pull_request as PullRequest;
+    const pullRequestPayload = event as PullRequest;
     populatePullRequestEventCommitDetails(pullRequestPayload, context);
   }
 
@@ -55,7 +55,6 @@ async function run(): Promise<void> {
     setVariable(EnvironmentVariables.CI_BRANCH, branchName);
   }
 
-  // @ts-ignore - missing lib defs
   setVariable(EnvironmentVariables.CI_REPO_NAME, event?.repository?.name);
 }
 
