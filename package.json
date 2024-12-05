@@ -1,6 +1,6 @@
 {
   "name": "codeship-env-adapter",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Add Codeship Pro environment variables to your workflow",
   "main": "lib/index.js",
   "scripts": {
