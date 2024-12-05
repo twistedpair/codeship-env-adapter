@@ -96,7 +96,7 @@ async function populatePullRequestEventCommitDetails(
 
     setVariable(
       EnvironmentVariables.CI_COMMIT_MESSAGE,
-      response.data.commit.message,
+      response.data?.commit?.message,
     );
   } else {
     core.warning(
