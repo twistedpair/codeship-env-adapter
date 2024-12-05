@@ -73,9 +73,7 @@ async function populatePullRequestEventCommitDetails(
   context: Context,
 ) {
   const head = pullRequestEvent.pull_request.head;
-  const branch = head?.ref;
-  const branchName = context?.ref?.match(/[^/]+$/)?.[0];
-  setVariable(EnvironmentVariables.CI_BRANCH, branchName);
+  setVariable(EnvironmentVariables.CI_BRANCH, head?.ref);
   setVariable(EnvironmentVariables.CI_COMMIT_ID, head?.sha);
   setVariable(
     EnvironmentVariables.CI_COMMITTER_USERNAME,
