@@ -74,11 +74,11 @@ async function populatePullRequestEventCommitDetails(
   context: Context,
 ) {
   const head = pullRequestEvent.head;
-  const user = head.user;
-  setVariable(EnvironmentVariables.CI_COMMIT_ID, head.sha);
-  setVariable(EnvironmentVariables.CI_COMMITTER_USERNAME, user.login);
-  setVariable(EnvironmentVariables.CI_COMMITTER_EMAIL, user.email ?? '');
-  setVariable(EnvironmentVariables.CI_COMMITTER_NAME, user.name);
+  const user = head?.user;
+  setVariable(EnvironmentVariables.CI_COMMIT_ID, head?.sha);
+  setVariable(EnvironmentVariables.CI_COMMITTER_USERNAME, user?.login);
+  setVariable(EnvironmentVariables.CI_COMMITTER_EMAIL, user?.email ?? '');
+  setVariable(EnvironmentVariables.CI_COMMITTER_NAME, user?.name);
   setVariable(EnvironmentVariables.CI_PULL_REQUEST, pullRequestEvent.url);
   setVariable(
     EnvironmentVariables.CI_PR_NUMBER,
@@ -91,7 +91,7 @@ async function populatePullRequestEventCommitDetails(
     const response = await octokit.rest.repos.getCommit({
       owner: context.repo.owner,
       repo: context.repo.repo,
-      ref: head.sha,
+      ref: head?.sha,
     });
 
     setVariable(
