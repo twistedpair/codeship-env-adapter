@@ -2,7 +2,7 @@ import * as core from '@actions/core';
 import * as github from '@actions/github';
 import {EnvironmentVariables} from './environmentVariables';
 import { v4 as uuidV4 } from 'uuid';
-import {PushEvent, PullRequest} from '@octokit/webhooks-types';
+import {PushEvent, PullRequestEvent} from '@octokit/webhooks-types';
 import {Context} from '@actions/github/lib/context';
 
 async function run(): Promise<void> {
@@ -23,14 +23,13 @@ async function run(): Promise<void> {
   setVariable(EnvironmentVariables.CI_BUILD_ID, buildId);
   setVariable(EnvironmentVariables.CI_BUILD_APPROVED, 'false');
 
-  core.notice(`EVENT_CONTEXT: ${JSON.stringify(context)}`);
   const event = context.payload;
   const eventName = context.eventName;
   if (eventName === 'push') {
     const pushPayload = event as PushEvent;
     populatePushEventCommitDetails(pushPayload, context);
   } else if (eventName === 'pull_request') {
-    const pullRequestPayload = event as PullRequest;
+    const pullRequestPayload = event as PullRequestEvent;
     populatePullRequestEventCommitDetails(pullRequestPayload, context);
   }
 
@@ -71,16 +70,20 @@ function populatePushEventCommitDetails(
 }
 
 async function populatePullRequestEventCommitDetails(
-  pullRequestEvent: PullRequest,
+  pullRequestEvent: PullRequestEvent,
   context: Context,
 ) {
-  const head = pullRequestEvent.head;
+  const head = pullRequestEvent.pull_request.head;
   const user = head?.user;
   setVariable(EnvironmentVariables.CI_COMMIT_ID, head?.sha);
-  setVariable(EnvironmentVariables.CI_COMMITTER_USERNAME, user?.login);
-  setVariable(EnvironmentVariables.CI_COMMITTER_EMAIL, user?.email ?? '');
-  setVariable(EnvironmentVariables.CI_COMMITTER_NAME, user?.name);
-  setVariable(EnvironmentVariables.CI_PULL_REQUEST, pullRequestEvent.url);
+  setVariable(
+    EnvironmentVariables.CI_COMMITTER_USERNAME,
+    pullRequestEvent.sender?.login,
+  );
+  setVariable(
+    EnvironmentVariables.CI_PULL_REQUEST,
+    pullRequestEvent.pull_request.url,
+  );
   setVariable(
     EnvironmentVariables.CI_PR_NUMBER,
     pullRequestEvent.number?.toString(),
@@ -95,10 +98,10 @@ async function populatePullRequestEventCommitDetails(
       ref: head?.sha,
     });
 
-    setVariable(
-      EnvironmentVariables.CI_COMMIT_MESSAGE,
-      response.data?.commit?.message,
-    );
+    const commit = response.data?.commit;
+    setVariable(EnvironmentVariables.CI_COMMIT_MESSAGE, commit?.message);
+    setVariable(EnvironmentVariables.CI_COMMITTER_EMAIL, commit?.author?.email);
+    setVariable(EnvironmentVariables.CI_COMMITTER_NAME, commit?.author?.name);
   } else {
     core.warning(
       'Unable to get commit message for PR. Missing github-token input.',
