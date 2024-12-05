@@ -5,7 +5,7 @@ branding:
   color: orange
 inputs:
   github-token:
-    description: 'Optional: GitHub token with permissions to look up commit and pull request details so that CI_COMMIT_MESSAGE is populated with the HEAD commit message'
+    description: (optional) GitHub token with permissions to look up head commit details on pull request events so that CI_COMMIT_* variabls are properly populated on pull_request events
     required: false
   project-id:
     description: (optional) Codeship project id
