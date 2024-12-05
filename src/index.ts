@@ -23,7 +23,7 @@ async function run(): Promise<void> {
   setVariable(EnvironmentVariables.CI_BUILD_ID, buildId);
   setVariable(EnvironmentVariables.CI_BUILD_APPROVED, 'false');
 
-  core.info(`EVENT_CONTEXT: ${JSON.stringify(context)}`);
+  core.notice(`EVENT_CONTEXT: ${JSON.stringify(context)}`);
   const event = context.payload;
   const eventName = context.eventName;
   if (eventName === 'push') {
