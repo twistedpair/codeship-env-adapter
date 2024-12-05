@@ -47,12 +47,6 @@ async function run(): Promise<void> {
   ); // No millis expect
   setVariable(EnvironmentVariables.CI_TIMESTAMP, nowSeconds.toString());
   setVariable(EnvironmentVariables.CI_STRING_TIME, nowAsTimeExpectedIsoString);
-
-  const branchName = context?.ref?.match(/[^/]+$/)?.[0];
-  if (branchName) {
-    setVariable(EnvironmentVariables.CI_BRANCH, branchName);
-  }
-
   setVariable(EnvironmentVariables.CI_REPO_NAME, event?.repository?.name);
 }
 
@@ -67,6 +61,11 @@ function populatePushEventCommitDetails(
   setVariable(EnvironmentVariables.CI_COMMITTER_USERNAME, author?.username);
   setVariable(EnvironmentVariables.CI_COMMITTER_EMAIL, author?.email ?? '');
   setVariable(EnvironmentVariables.CI_COMMITTER_NAME, author?.name);
+
+  const branchName = context?.ref?.match(/[^/]+$/)?.[0];
+  if (branchName) {
+    setVariable(EnvironmentVariables.CI_BRANCH, branchName);
+  }
 }
 
 async function populatePullRequestEventCommitDetails(
@@ -74,7 +73,9 @@ async function populatePullRequestEventCommitDetails(
   context: Context,
 ) {
   const head = pullRequestEvent.pull_request.head;
-  const user = head?.user;
+  const branch = head?.ref;
+  const branchName = context?.ref?.match(/[^/]+$/)?.[0];
+  setVariable(EnvironmentVariables.CI_BRANCH, branchName);
   setVariable(EnvironmentVariables.CI_COMMIT_ID, head?.sha);
   setVariable(
     EnvironmentVariables.CI_COMMITTER_USERNAME,
