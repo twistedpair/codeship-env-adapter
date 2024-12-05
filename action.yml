@@ -4,6 +4,9 @@ branding:
   icon: life-buoy
   color: orange
 inputs:
+  github-token:
+    description: (optional) GitHub token with permissions to look up head commit details on pull request events so that CI_COMMIT_* variabls are properly populated on pull_request events
+    required: false
   project-id:
     description: (optional) Codeship project id
     required: false

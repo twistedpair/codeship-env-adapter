@@ -2,33 +2,36 @@ import * as core from '@actions/core';
 import * as github from '@actions/github';
 import {EnvironmentVariables} from './environmentVariables';
 import { v4 as uuidV4 } from 'uuid';
+import {PushEvent, PullRequestEvent} from '@octokit/webhooks-types';
+import {Context} from '@actions/github/lib/context';
 
 async function run(): Promise<void> {
-  const projectId: string | undefined = core.getInput('project-id', {required: false});
-  const context = github.context;
-  const event = context.payload;
+  const projectId: string | undefined = core.getInput('project-id', {
+    required: false,
+  });
 
-  if(projectId) {
+  if (projectId) {
     setVariable(EnvironmentVariables.CI_PROJECT_ID, projectId);
   }
+
+  const context = github.context;
 
   setVariable(EnvironmentVariables.CI, 'true');
   setVariable(EnvironmentVariables.CI_NAME, 'github');
 
-  // TODO get from toolkit - isn't available in that object presently, found in '${{ github.run_id }}'
-  // @ts-ignore
-  const buildId = context?.run_id ?? uuidV4(); // use UUID until GitHub library starts working
+  const buildId = context?.runId?.toString() ?? uuidV4(); // use UUID until GitHub library starts working
   setVariable(EnvironmentVariables.CI_BUILD_ID, buildId);
   setVariable(EnvironmentVariables.CI_BUILD_APPROVED, 'false');
 
-  setVariable(EnvironmentVariables.CI_COMMIT_ID, context?.sha);
-
-  const headCommit = event?.head_commit;
-  const author = headCommit?.author;
-  setVariable(EnvironmentVariables.CI_COMMIT_MESSAGE, headCommit?.message);
-  setVariable(EnvironmentVariables.CI_COMMITTER_USERNAME, author?.username);
-  setVariable(EnvironmentVariables.CI_COMMITTER_EMAIL, author?.email);
-  setVariable(EnvironmentVariables.CI_COMMITTER_NAME, author?.name);
+  const event = context.payload;
+  const eventName = context.eventName;
+  if (eventName === 'push') {
+    const pushPayload = event as PushEvent;
+    populatePushEventCommitDetails(pushPayload, context);
+  } else if (eventName === 'pull_request') {
+    const pullRequestPayload = event as PullRequestEvent;
+    populatePullRequestEventCommitDetails(pullRequestPayload, context);
+  }
 
   // TODO add expected description (rather complex to dig up), made by `git describe`
   // Expected description format - "2019-07-18.1563481767-1-g7f60" < 'g<first 4 sha char>'
@@ -36,29 +39,76 @@ async function run(): Promise<void> {
   setVariable(EnvironmentVariables.CI_COMMIT_DESCRIPTION, '');
 
   const nowMilliseconds = Date.now();
-  const nowSeconds = Math.floor(nowMilliseconds/1000);
+  const nowSeconds = Math.floor(nowMilliseconds / 1000);
   const nowAsTimeIsoString = new Date(nowMilliseconds).toISOString();
-  const nowAsTimeExpectedIsoString = nowAsTimeIsoString.replace(/\.\d{3}Z/,'Z'); // No millis expect
+  const nowAsTimeExpectedIsoString = nowAsTimeIsoString.replace(
+    /\.\d{3}Z/,
+    'Z',
+  ); // No millis expect
   setVariable(EnvironmentVariables.CI_TIMESTAMP, nowSeconds.toString());
   setVariable(EnvironmentVariables.CI_STRING_TIME, nowAsTimeExpectedIsoString);
-
-
-  const branchName = context?.ref?.match(/[^/]+$/)?.[0];
-  if(branchName) {
-    setVariable(EnvironmentVariables.CI_BRANCH, branchName);
-  }
-
-  // @ts-ignore - missing lib defs
-  setVariable(EnvironmentVariables.CI_REPO_NAME,  event?.repository?.name );
-
-  // TODO The pull request payload is missing in this implementation (tested with PR builds)
-  // Note: the PR functionality in Codeship is not function from my empirical testing, so this behavior is the same as Codeship
-  const pullRequest = event?.pull_request;
-  setVariable(EnvironmentVariables.CI_PULL_REQUEST,  pullRequest?.number?.toString() ?? '');
-  setVariable(EnvironmentVariables.CI_PR_NUMBER,  pullRequest?.html_url ?? 'false');
+  setVariable(EnvironmentVariables.CI_REPO_NAME, event?.repository?.name);
 }
 
-function setVariable(name: EnvironmentVariables, value: string) {
+function populatePushEventCommitDetails(
+  pushEvent: PushEvent,
+  context: Context,
+) {
+  const headCommit = pushEvent.head_commit;
+  const author = headCommit?.author;
+  setVariable(EnvironmentVariables.CI_COMMIT_ID, context?.sha);
+  setVariable(EnvironmentVariables.CI_COMMIT_MESSAGE, headCommit?.message);
+  setVariable(EnvironmentVariables.CI_COMMITTER_USERNAME, author?.username);
+  setVariable(EnvironmentVariables.CI_COMMITTER_EMAIL, author?.email ?? '');
+  setVariable(EnvironmentVariables.CI_COMMITTER_NAME, author?.name);
+
+  const branchName = context?.ref?.match(/[^/]+$/)?.[0];
+  if (branchName) {
+    setVariable(EnvironmentVariables.CI_BRANCH, branchName);
+  }
+}
+
+async function populatePullRequestEventCommitDetails(
+  pullRequestEvent: PullRequestEvent,
+  context: Context,
+) {
+  const head = pullRequestEvent.pull_request.head;
+  setVariable(EnvironmentVariables.CI_BRANCH, head?.ref);
+  setVariable(EnvironmentVariables.CI_COMMIT_ID, head?.sha);
+  setVariable(
+    EnvironmentVariables.CI_COMMITTER_USERNAME,
+    pullRequestEvent.sender?.login,
+  );
+  setVariable(
+    EnvironmentVariables.CI_PULL_REQUEST,
+    pullRequestEvent.pull_request.url,
+  );
+  setVariable(
+    EnvironmentVariables.CI_PR_NUMBER,
+    pullRequestEvent.number?.toString(),
+  );
+
+  const GITHUB_TOKEN = core.getInput('github-token');
+  if (GITHUB_TOKEN) {
+    const octokit = github.getOctokit(GITHUB_TOKEN);
+    const response = await octokit.rest.repos.getCommit({
+      owner: context.repo.owner,
+      repo: context.repo.repo,
+      ref: head?.sha,
+    });
+
+    const commit = response.data?.commit;
+    setVariable(EnvironmentVariables.CI_COMMIT_MESSAGE, commit?.message);
+    setVariable(EnvironmentVariables.CI_COMMITTER_EMAIL, commit?.author?.email);
+    setVariable(EnvironmentVariables.CI_COMMITTER_NAME, commit?.author?.name);
+  } else {
+    core.warning(
+      'Unable to get commit message for PR. Missing github-token input.',
+    );
+  }
+}
+
+function setVariable(name: EnvironmentVariables, value = '') {
   core.exportVariable(name.toString(), value);
 }
 
